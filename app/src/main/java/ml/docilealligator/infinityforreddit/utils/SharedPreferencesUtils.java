@@ -404,6 +404,7 @@ public class SharedPreferencesUtils {
     public static final String READ_POSTS_LIMIT = "_read_posts_limit";
     public static final String MARK_POSTS_AS_READ_AFTER_VOTING_BASE = "_mark_posts_as_read_after_voting";
     public static final String MARK_POSTS_AS_READ_ON_SCROLL_BASE = "_mark_posts_as_read_on_scroll";
+    public static final String SHOW_READ_POSTS_WITH_REDUCED_TRANSPARENCY_BASE = "_show_read_posts_with_reduced_transparency";
     public static final String HIDE_READ_POSTS_AUTOMATICALLY_BASE = "_hide_read_posts_automatically";
     public static final String HIDE_READ_POSTS_AUTOMATICALLY_IN_SUBREDDITS_BASE = "_hide_read_posts_automatically_in_subreddits";
     public static final String HIDE_READ_POSTS_AUTOMATICALLY_IN_USERS_BASE = "_hide_read_posts_automatically_in_users";
