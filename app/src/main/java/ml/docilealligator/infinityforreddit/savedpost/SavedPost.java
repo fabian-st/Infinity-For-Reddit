@@ -105,13 +105,14 @@ public class SavedPost implements Parcelable {
     @Override
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof SavedPost) {
-            return ((SavedPost) obj).id.equals(id);
+            SavedPost other = (SavedPost) obj;
+            return other.id.equals(id) && other.username.equals(username);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return id.hashCode() * 31 + username.hashCode();
     }
 }

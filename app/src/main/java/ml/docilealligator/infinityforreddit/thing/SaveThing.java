@@ -1,5 +1,8 @@
 package ml.docilealligator.infinityforreddit.thing;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.annotation.NonNull;
 
 import java.util.HashMap;
@@ -60,14 +63,20 @@ public class SaveThing {
 
     public static void saveThingLocally(RedditDataRoomDatabase redditDataRoomDatabase, Executor executor,
                                         String username, String postId, int type, SaveThingListener saveThingListener) {
-        SavedPostUtils.insertSavedPost(redditDataRoomDatabase, executor, username, postId, type);
-        saveThingListener.success();
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            SavedPostUtils.insertSavedPost(redditDataRoomDatabase, username, postId, type);
+            mainHandler.post(saveThingListener::success);
+        });
     }
 
     public static void unsaveThingLocally(RedditDataRoomDatabase redditDataRoomDatabase, Executor executor,
                                           String username, String postId, SaveThingListener saveThingListener) {
-        SavedPostUtils.deleteSavedPost(redditDataRoomDatabase, executor, username, postId);
-        saveThingListener.success();
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            SavedPostUtils.deleteSavedPost(redditDataRoomDatabase, username, postId);
+            mainHandler.post(saveThingListener::success);
+        });
     }
 
     public interface SaveThingListener {
