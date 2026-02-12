@@ -80,17 +80,14 @@ public class PostHistoryFragment extends Fragment {
 
         boolean isAnonymous = mActivity.accountName.equals(Account.ANONYMOUS_ACCOUNT);
         if (isAnonymous) {
-            binding.infoTextViewPostHistoryFragment.setText(R.string.only_for_logged_in_user);
-            binding.markPostsAsReadLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
+            // For anonymous users, hide account-specific options but keep basic read post options
+            binding.infoTextViewPostHistoryFragment.setVisibility(View.GONE);
             binding.readPostsLimitLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
             binding.readPostsLimitTextInputLayoutPostHistoryFragment.setVisibility(View.GONE);
-            binding.markPostsAsReadAfterVotingLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
-            binding.markPostsAsReadOnScrollLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
             binding.hideReadPostsAutomaticallyLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
             binding.hideReadPostsAutomaticallyInSubredditsLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
             binding.hideReadPostsAutomaticallyInUsersLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
             binding.hideReadPostsAutomaticallyInSearchLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
-            return binding.getRoot();
         }
 
         binding.markPostsAsReadSwitchPostHistoryFragment.setChecked(postHistorySharedPreferences.getBoolean(
@@ -103,6 +100,8 @@ public class PostHistoryFragment extends Fragment {
                 mActivity.accountName + SharedPreferencesUtils.MARK_POSTS_AS_READ_AFTER_VOTING_BASE, false));
         binding.markPostsAsReadOnScrollSwitchPostHistoryFragment.setChecked(postHistorySharedPreferences.getBoolean(
                 mActivity.accountName + SharedPreferencesUtils.MARK_POSTS_AS_READ_ON_SCROLL_BASE, false));
+        binding.showReadPostsWithReducedTransparencySwitchPostHistoryFragment.setChecked(postHistorySharedPreferences.getBoolean(
+                mActivity.accountName + SharedPreferencesUtils.SHOW_READ_POSTS_WITH_REDUCED_TRANSPARENCY_BASE, false));
         binding.hideReadPostsAutomaticallySwitchPostHistoryFragment.setChecked(postHistorySharedPreferences.getBoolean(
                 mActivity.accountName + SharedPreferencesUtils.HIDE_READ_POSTS_AUTOMATICALLY_BASE, false));
         binding.hideReadPostsAutomaticallyInSubredditsSwitchPostHistoryFragment.setChecked(postHistorySharedPreferences.getBoolean(
@@ -151,6 +150,9 @@ public class PostHistoryFragment extends Fragment {
         binding.markPostsAsReadOnScrollLinearLayoutPostHistoryFragment.setOnClickListener(view -> binding.markPostsAsReadOnScrollSwitchPostHistoryFragment.performClick());
         binding.markPostsAsReadOnScrollSwitchPostHistoryFragment.setOnCheckedChangeListener((compoundButton, b) -> postHistorySharedPreferences.edit().putBoolean(mActivity.accountName + SharedPreferencesUtils.MARK_POSTS_AS_READ_ON_SCROLL_BASE, b).apply());
 
+        binding.showReadPostsWithReducedTransparencyLinearLayoutPostHistoryFragment.setOnClickListener(view -> binding.showReadPostsWithReducedTransparencySwitchPostHistoryFragment.performClick());
+        binding.showReadPostsWithReducedTransparencySwitchPostHistoryFragment.setOnCheckedChangeListener((compoundButton, b) -> postHistorySharedPreferences.edit().putBoolean(mActivity.accountName + SharedPreferencesUtils.SHOW_READ_POSTS_WITH_REDUCED_TRANSPARENCY_BASE, b).apply());
+
         binding.hideReadPostsAutomaticallyLinearLayoutPostHistoryFragment.setOnClickListener(view -> binding.hideReadPostsAutomaticallySwitchPostHistoryFragment.performClick());
         binding.hideReadPostsAutomaticallySwitchPostHistoryFragment.setOnCheckedChangeListener((compoundButton, b) -> {
             postHistorySharedPreferences.edit().putBoolean(mActivity.accountName + SharedPreferencesUtils.HIDE_READ_POSTS_AUTOMATICALLY_BASE, b).apply();
@@ -170,24 +172,31 @@ public class PostHistoryFragment extends Fragment {
     }
 
     private void updateOptions() {
+        boolean isAnonymous = mActivity.accountName.equals(Account.ANONYMOUS_ACCOUNT);
+        
         if (binding.markPostsAsReadSwitchPostHistoryFragment.isChecked()) {
-            binding.readPostsLimitLinearLayoutPostHistoryFragment.setVisibility(View.VISIBLE);
-            binding.readPostsLimitTextInputLayoutPostHistoryFragment.setVisibility(View.VISIBLE);
+            // For non-anonymous users, show all options
+            if (!isAnonymous) {
+                binding.readPostsLimitLinearLayoutPostHistoryFragment.setVisibility(View.VISIBLE);
+                boolean limitReadPosts = postHistorySharedPreferences.getBoolean(
+                        mActivity.accountName + SharedPreferencesUtils.READ_POSTS_LIMIT_ENABLED, true);
+                binding.readPostsLimitTextInputLayoutPostHistoryFragment.setVisibility(limitReadPosts ? View.VISIBLE : View.GONE);
+                binding.hideReadPostsAutomaticallyLinearLayoutPostHistoryFragment.setVisibility(View.VISIBLE);
+                binding.hideReadPostsAutomaticallyInSubredditsLinearLayoutPostHistoryFragment.setVisibility(binding.hideReadPostsAutomaticallySwitchPostHistoryFragment.isChecked() ? View.VISIBLE : View.GONE);
+                binding.hideReadPostsAutomaticallyInUsersLinearLayoutPostHistoryFragment.setVisibility(binding.hideReadPostsAutomaticallySwitchPostHistoryFragment.isChecked() ? View.VISIBLE : View.GONE);
+                binding.hideReadPostsAutomaticallyInSearchLinearLayoutPostHistoryFragment.setVisibility(binding.hideReadPostsAutomaticallySwitchPostHistoryFragment.isChecked() ? View.VISIBLE : View.GONE);
+            }
+            
+            // Show these options for all users (including anonymous)
             binding.markPostsAsReadAfterVotingLinearLayoutPostHistoryFragment.setVisibility(View.VISIBLE);
             binding.markPostsAsReadOnScrollLinearLayoutPostHistoryFragment.setVisibility(View.VISIBLE);
-            binding.hideReadPostsAutomaticallyLinearLayoutPostHistoryFragment.setVisibility(View.VISIBLE);
-            binding.hideReadPostsAutomaticallyInSubredditsLinearLayoutPostHistoryFragment.setVisibility(binding.hideReadPostsAutomaticallySwitchPostHistoryFragment.isChecked() ? View.VISIBLE : View.GONE);
-            binding.hideReadPostsAutomaticallyInUsersLinearLayoutPostHistoryFragment.setVisibility(binding.hideReadPostsAutomaticallySwitchPostHistoryFragment.isChecked() ? View.VISIBLE : View.GONE);
-            binding.hideReadPostsAutomaticallyInSearchLinearLayoutPostHistoryFragment.setVisibility(binding.hideReadPostsAutomaticallySwitchPostHistoryFragment.isChecked() ? View.VISIBLE : View.GONE);
-
-            boolean limitReadPosts = postHistorySharedPreferences.getBoolean(
-                    mActivity.accountName + SharedPreferencesUtils.READ_POSTS_LIMIT_ENABLED, true);
-            binding.readPostsLimitTextInputLayoutPostHistoryFragment.setVisibility(limitReadPosts ? View.VISIBLE : View.GONE);
+            binding.showReadPostsWithReducedTransparencyLinearLayoutPostHistoryFragment.setVisibility(View.VISIBLE);
         } else {
             binding.readPostsLimitLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
             binding.readPostsLimitTextInputLayoutPostHistoryFragment.setVisibility(View.GONE);
             binding.markPostsAsReadAfterVotingLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
             binding.markPostsAsReadOnScrollLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
+            binding.showReadPostsWithReducedTransparencyLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
             binding.hideReadPostsAutomaticallyLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
             binding.hideReadPostsAutomaticallyInSubredditsLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
             binding.hideReadPostsAutomaticallyInUsersLinearLayoutPostHistoryFragment.setVisibility(View.GONE);
@@ -207,6 +216,7 @@ public class PostHistoryFragment extends Fragment {
         binding.readPostsLimitTextInputEditTextPostHistoryFragment.setTextColor(primaryTextColor);
         binding.markPostsAsReadAfterVotingTextViewPostHistoryFragment.setTextColor(primaryTextColor);
         binding.markPostsAsReadOnScrollTextViewPostHistoryFragment.setTextColor(primaryTextColor);
+        binding.showReadPostsWithReducedTransparencyTextViewPostHistoryFragment.setTextColor(primaryTextColor);
         binding.hideReadPostsAutomaticallyTextViewPostHistoryFragment.setTextColor(primaryTextColor);
         binding.hideReadPostsAutomaticallyInSubredditsTextViewPostHistoryFragment.setTextColor(primaryTextColor);
         binding.hideReadPostsAutomaticallyInUsersTextViewPostHistoryFragment.setTextColor(primaryTextColor);

@@ -252,6 +252,7 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
     private boolean mMarkPostsAsRead;
     private boolean mMarkPostsAsReadAfterVoting;
     private boolean mMarkPostsAsReadOnScroll;
+    private boolean mShowReadPostsWithReducedTransparency;
     private boolean mHidePostType;
     private boolean mHidePostFlair;
     private boolean mHideSubredditAndUserPrefix;
@@ -339,6 +340,7 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
                 mMarkPostsAsRead = postHistorySharedPreferences.getBoolean((accountName.equals(Account.ANONYMOUS_ACCOUNT) ? "" : accountName) + SharedPreferencesUtils.MARK_POSTS_AS_READ_BASE, false);
                 mMarkPostsAsReadAfterVoting = postHistorySharedPreferences.getBoolean((accountName.equals(Account.ANONYMOUS_ACCOUNT) ? "" : accountName) + SharedPreferencesUtils.MARK_POSTS_AS_READ_AFTER_VOTING_BASE, false);
                 mMarkPostsAsReadOnScroll = postHistorySharedPreferences.getBoolean((accountName.equals(Account.ANONYMOUS_ACCOUNT) ? "" : accountName) + SharedPreferencesUtils.MARK_POSTS_AS_READ_ON_SCROLL_BASE, false);
+                mShowReadPostsWithReducedTransparency = postHistorySharedPreferences.getBoolean((accountName.equals(Account.ANONYMOUS_ACCOUNT) ? "" : accountName) + SharedPreferencesUtils.SHOW_READ_POSTS_WITH_REDUCED_TRANSPARENCY_BASE, false);
                 mHandleReadPost = true;
             }
 
@@ -659,6 +661,9 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
             if (mHandleReadPost && post.isRead()) {
                 ((PostViewHolder) holder).setItemViewBackgroundColor(true);
                 ((PostViewHolder) holder).titleTextView.setTextColor(mReadPostTitleColor);
+                ((PostViewHolder) holder).setItemViewReducedTransparency(mShowReadPostsWithReducedTransparency);
+            } else {
+                ((PostViewHolder) holder).setItemViewReducedTransparency(false);
             }
 
             if (mDisplaySubredditName) {
@@ -1152,6 +1157,9 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
                 if (mHandleReadPost && post.isRead()) {
                     holder.itemView.setBackgroundTintList(ColorStateList.valueOf(mReadPostCardViewBackgroundColor));
                     ((PostGalleryViewHolder) holder).binding.titleTextViewItemPostGallery.setTextColor(mReadPostTitleColor);
+                    holder.itemView.setAlpha(mShowReadPostsWithReducedTransparency ? 0.6f : 1.0f);
+                } else {
+                    holder.itemView.setAlpha(1.0f);
                 }
 
                 if (mDataSavingMode && (mDisableImagePreview ||
@@ -1309,6 +1317,9 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
                 ((PostGalleryBaseGalleryTypeViewHolder) holder).currentPosition = position;
                 if (mHandleReadPost && post.isRead()) {
                     holder.itemView.setBackgroundTintList(ColorStateList.valueOf(mReadPostCardViewBackgroundColor));
+                    holder.itemView.setAlpha(mShowReadPostsWithReducedTransparency ? 0.6f : 1.0f);
+                } else {
+                    holder.itemView.setAlpha(1.0f);
                 }
 
                 if (mDataSavingMode && mDisableImagePreview) {
@@ -2532,6 +2543,7 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         abstract void setItemViewBackgroundColor(boolean isReadPost);
+        abstract void setItemViewReducedTransparency(boolean applyTransparency);
         abstract void markPostRead(Post post, boolean changePostItemColor);
     }
 
@@ -3112,7 +3124,7 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
                 return;
             }
 
-            if (!mAccountName.equals(Account.ANONYMOUS_ACCOUNT) && !post.isRead() && mMarkPostsAsRead) {
+            if (!post.isRead() && mMarkPostsAsRead) {
                 post.markAsRead();
                 if (changePostItemColor) {
                     setItemViewBackgroundColor(true);
@@ -3302,6 +3314,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundTintList(ColorStateList.valueOf(isReadPost ? mReadPostCardViewBackgroundColor : mCardViewBackgroundColor));
         }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
+        }
     }
 
     @UnstableApi
@@ -3342,6 +3359,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         @Override
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundTintList(ColorStateList.valueOf(isReadPost ? mReadPostCardViewBackgroundColor : mCardViewBackgroundColor));
+        }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -3517,6 +3539,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         @Override
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundTintList(ColorStateList.valueOf(isReadPost ? mReadPostCardViewBackgroundColor : mCardViewBackgroundColor));
+        }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -3773,6 +3800,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundTintList(ColorStateList.valueOf(isReadPost ? mReadPostCardViewBackgroundColor : mCardViewBackgroundColor));
         }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
+        }
     }
 
     class PostTextTypeViewHolder extends PostBaseViewHolder {
@@ -3862,6 +3894,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         @Override
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundTintList(ColorStateList.valueOf(isReadPost ? mReadPostCardViewBackgroundColor : mCardViewBackgroundColor));
+        }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -4138,12 +4175,17 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
+        }
+
+        @Override
         void markPostRead(Post post, boolean changePostItemColor) {
             if (!mHandleReadPost) {
                 return;
             }
 
-            if (!mAccountName.equals(Account.ANONYMOUS_ACCOUNT) && !post.isRead() && mMarkPostsAsRead) {
+            if (!post.isRead() && mMarkPostsAsRead) {
                 post.markAsRead();
                 if (changePostItemColor) {
                     itemView.setBackgroundColor(mReadPostCardViewBackgroundColor);
@@ -4386,7 +4428,7 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
                 return;
             }
 
-            if (!mAccountName.equals(Account.ANONYMOUS_ACCOUNT) && !post.isRead() && mMarkPostsAsRead) {
+            if (!post.isRead() && mMarkPostsAsRead) {
                 post.markAsRead();
                 if (changePostItemColor) {
                     itemView.setBackgroundTintList(ColorStateList.valueOf(mReadPostCardViewBackgroundColor));
@@ -4583,7 +4625,7 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
                 return;
             }
 
-            if (!mAccountName.equals(Account.ANONYMOUS_ACCOUNT) && !post.isRead() && mMarkPostsAsRead) {
+            if (!post.isRead() && mMarkPostsAsRead) {
                 post.markAsRead();
                 if (changePostItemColor) {
                     itemView.setBackgroundTintList(ColorStateList.valueOf(mReadPostCardViewBackgroundColor));
@@ -4645,6 +4687,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundColor(isReadPost ? mReadPostCardViewBackgroundColor : mCardViewBackgroundColor);
         }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
+        }
     }
 
     @UnstableApi
@@ -4688,6 +4735,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundColor(isReadPost ? mReadPostCardViewBackgroundColor : mCardViewBackgroundColor);
         }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
+        }
     }
 
     class PostCard2WithPreviewViewHolder extends PostWithPreviewTypeViewHolder {
@@ -4730,6 +4782,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundColor(isReadPost ? mReadPostCardViewBackgroundColor : mCardViewBackgroundColor);
         }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
+        }
     }
 
     public class PostCard2GalleryTypeViewHolder extends PostBaseGalleryTypeViewHolder {
@@ -4768,6 +4825,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundColor(isReadPost ? mReadPostCardViewBackgroundColor : mCardViewBackgroundColor);
         }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
+        }
     }
 
     class PostCard2TextTypeViewHolder extends PostTextTypeViewHolder {
@@ -4803,6 +4865,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         @Override
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundColor(isReadPost ? mReadPostCardViewBackgroundColor : mCardViewBackgroundColor);
+        }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -4845,6 +4912,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundTintList(ColorStateList.valueOf(isReadPost ? mReadPostFilledCardViewBackgroundColor : mFilledCardViewBackgroundColor));
         }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
+        }
     }
 
     @UnstableApi
@@ -4886,6 +4958,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundTintList(ColorStateList.valueOf(isReadPost ? mReadPostFilledCardViewBackgroundColor : mFilledCardViewBackgroundColor));
         }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
+        }
     }
 
     public class PostMaterial3CardWithPreviewViewHolder extends PostWithPreviewTypeViewHolder {
@@ -4924,6 +5001,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundTintList(ColorStateList.valueOf(isReadPost ? mReadPostFilledCardViewBackgroundColor : mFilledCardViewBackgroundColor));
         }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
+        }
     }
 
     public class PostMaterial3CardGalleryTypeViewHolder extends PostBaseGalleryTypeViewHolder {
@@ -4959,6 +5041,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundTintList(ColorStateList.valueOf(isReadPost ? mReadPostFilledCardViewBackgroundColor : mFilledCardViewBackgroundColor));
         }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
+        }
     }
 
     public class PostMaterial3CardTextTypeViewHolder extends PostTextTypeViewHolder {
@@ -4991,6 +5078,11 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         @Override
         void setItemViewBackgroundColor(boolean isReadPost) {
             itemView.setBackgroundTintList(ColorStateList.valueOf(isReadPost ? mReadPostFilledCardViewBackgroundColor : mFilledCardViewBackgroundColor));
+        }
+
+        @Override
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 }
