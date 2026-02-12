@@ -83,6 +83,11 @@ public class GoogleCloudTranslator implements Translator {
                                 return;
                             }
                             
+                            if (response.body() == null) {
+                                future.complete(TranslationResult.error("Empty response body"));
+                                return;
+                            }
+                            
                             String responseBody = response.body().string();
                             JsonObject responseJson = gson.fromJson(responseBody, JsonObject.class);
                             

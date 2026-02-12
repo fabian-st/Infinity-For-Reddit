@@ -870,7 +870,7 @@
         <item>Polish</item>
         <item>Turkish</item>
         <item>Swedish</item>
-        <item>Norwegian</item>
+        <item>Norwegian Bokmål</item>
         <item>Danish</item>
         <item>Finnish</item>
     </string-array>
@@ -894,7 +894,7 @@
         <item>pl</item>
         <item>tr</item>
         <item>sv</item>
-        <item>no</item>
+        <item>nb</item>
         <item>da</item>
         <item>fi</item>
     </string-array>

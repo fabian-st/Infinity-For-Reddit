@@ -885,6 +885,12 @@ public class ViewPostDetailFragment extends Fragment implements FragmentCommunic
         }
     }
 
+    public void translateComment(Comment comment, int position) {
+        if (mCommentsAdapter != null) {
+            mCommentsAdapter.translateComment(position, comment);
+        }
+    }
+
     public void searchComment(String query, boolean searchNextComment) {
         if (mCommentsAdapter != null) {
             ArrayList<Comment> visibleComments = mCommentsAdapter.getVisibleComments();

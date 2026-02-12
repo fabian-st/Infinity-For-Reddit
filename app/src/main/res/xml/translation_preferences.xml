@@ -17,13 +17,15 @@
             app:key="google_translation_api_key"
             app:title="@string/settings_google_translation_api_key"
             app:summary="@string/settings_google_translation_api_key_summary"
-            app:dependency="translator_type" />
+            app:dependency="translator_type"
+            app:useSimpleSummaryProvider="false" />
 
         <androidx.preference.EditTextPreference
             app:key="deepl_api_key"
             app:title="@string/settings_deepl_api_key"
             app:summary="@string/settings_deepl_api_key_summary"
-            app:dependency="translator_type" />
+            app:dependency="translator_type"
+            app:useSimpleSummaryProvider="false" />
 
     </ml.docilealligator.infinityforreddit.customviews.preference.CustomFontPreferenceCategory>
 

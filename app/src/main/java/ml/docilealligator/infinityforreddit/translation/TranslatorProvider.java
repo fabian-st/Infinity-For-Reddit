@@ -45,14 +45,14 @@ public class TranslatorProvider {
     }
     
     @NonNull
-    public Translator getTranslator() {
+    public synchronized Translator getTranslator() {
         if (currentTranslator == null) {
             currentTranslator = createTranslator();
         }
         return currentTranslator;
     }
-    
-    public void refreshTranslator() {
+
+    public synchronized void refreshTranslator() {
         currentTranslator = createTranslator();
     }
     
