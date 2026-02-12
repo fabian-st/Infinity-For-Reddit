@@ -118,6 +118,7 @@ import ml.docilealligator.infinityforreddit.markdown.MarkdownUtils;
 import ml.docilealligator.infinityforreddit.post.FetchStreamableVideo;
 import ml.docilealligator.infinityforreddit.post.Post;
 import ml.docilealligator.infinityforreddit.post.PostPagingSource;
+import ml.docilealligator.infinityforreddit.savedpost.SavedPost;
 import ml.docilealligator.infinityforreddit.thing.SaveThing;
 import ml.docilealligator.infinityforreddit.thing.StreamableVideo;
 import ml.docilealligator.infinityforreddit.thing.VoteThing;
@@ -1578,7 +1579,48 @@ public class PostDetailRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
 
             this.saveButton.setOnClickListener(view -> {
                 if (mAccountName.equals(Account.ANONYMOUS_ACCOUNT)) {
-                    Toast.makeText(mActivity, R.string.login_first, Toast.LENGTH_SHORT).show();
+                    // Use local storage for anonymous users
+                    if (mPost.isSaved()) {
+                        this.saveButton.setIconResource(R.drawable.ic_bookmark_border_grey_24dp);
+                        SaveThing.unsaveThingLocally(mRedditDataRoomDatabase, mExecutor, mAccountName, mPost.getId(),
+                                new SaveThing.SaveThingListener() {
+                                    @Override
+                                    public void success() {
+                                        mPost.setSaved(false);
+                                        PostDetailBaseViewHolder.this.saveButton.setIconResource(R.drawable.ic_bookmark_border_grey_24dp);
+                                        Toast.makeText(mActivity, R.string.post_unsaved_success, Toast.LENGTH_SHORT).show();
+                                        mPostDetailRecyclerViewAdapterCallback.updatePost(mPost);
+                                    }
+
+                                    @Override
+                                    public void failed() {
+                                        mPost.setSaved(true);
+                                        PostDetailBaseViewHolder.this.saveButton.setIconResource(R.drawable.ic_bookmark_grey_24dp);
+                                        Toast.makeText(mActivity, R.string.post_unsaved_failed, Toast.LENGTH_SHORT).show();
+                                        mPostDetailRecyclerViewAdapterCallback.updatePost(mPost);
+                                    }
+                                });
+                    } else {
+                        this.saveButton.setIconResource(R.drawable.ic_bookmark_grey_24dp);
+                        SaveThing.saveThingLocally(mRedditDataRoomDatabase, mExecutor, mAccountName, mPost.getId(), SavedPost.TYPE_POST,
+                                new SaveThing.SaveThingListener() {
+                                    @Override
+                                    public void success() {
+                                        mPost.setSaved(true);
+                                        PostDetailBaseViewHolder.this.saveButton.setIconResource(R.drawable.ic_bookmark_grey_24dp);
+                                        Toast.makeText(mActivity, R.string.post_saved_success, Toast.LENGTH_SHORT).show();
+                                        mPostDetailRecyclerViewAdapterCallback.updatePost(mPost);
+                                    }
+
+                                    @Override
+                                    public void failed() {
+                                        mPost.setSaved(false);
+                                        PostDetailBaseViewHolder.this.saveButton.setIconResource(R.drawable.ic_bookmark_border_grey_24dp);
+                                        Toast.makeText(mActivity, R.string.post_saved_failed, Toast.LENGTH_SHORT).show();
+                                        mPostDetailRecyclerViewAdapterCallback.updatePost(mPost);
+                                    }
+                                });
+                    }
                     return;
                 }
 

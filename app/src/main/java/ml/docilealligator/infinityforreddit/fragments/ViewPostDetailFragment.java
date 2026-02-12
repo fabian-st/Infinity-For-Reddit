@@ -106,6 +106,7 @@ import ml.docilealligator.infinityforreddit.post.FetchPost;
 import ml.docilealligator.infinityforreddit.post.HidePost;
 import ml.docilealligator.infinityforreddit.post.ParsePost;
 import ml.docilealligator.infinityforreddit.post.Post;
+import ml.docilealligator.infinityforreddit.savedpost.SavedPost;
 import ml.docilealligator.infinityforreddit.readpost.InsertReadPost;
 import ml.docilealligator.infinityforreddit.readpost.ReadPostsUtils;
 import ml.docilealligator.infinityforreddit.subreddit.FetchSubredditData;
@@ -989,55 +990,108 @@ public class ViewPostDetailFragment extends Fragment implements FragmentCommunic
             }
             return true;
         } else if (itemId == R.id.action_save_view_post_detail_fragment) {
-            if (mPost != null && !mActivity.accountName.equals(Account.ANONYMOUS_ACCOUNT)) {
-                if (mPost.isSaved()) {
-                    item.setIcon(mUnsavedIcon);
-                    SaveThing.unsaveThing(mOauthRetrofit, mActivity.accessToken, mPost.getFullName(),
-                            new SaveThing.SaveThingListener() {
-                                @Override
-                                public void success() {
-                                    if (isAdded()) {
-                                        mPost.setSaved(false);
-                                        item.setIcon(mUnsavedIcon);
-                                        showMessage(R.string.post_unsaved_success);
+            if (mPost != null) {
+                if (mActivity.accountName.equals(Account.ANONYMOUS_ACCOUNT)) {
+                    // Use local storage for anonymous users
+                    if (mPost.isSaved()) {
+                        item.setIcon(mUnsavedIcon);
+                        SaveThing.unsaveThingLocally(mRedditDataRoomDatabase, mExecutor, mActivity.accountName, mPost.getId(),
+                                new SaveThing.SaveThingListener() {
+                                    @Override
+                                    public void success() {
+                                        if (isAdded()) {
+                                            mPost.setSaved(false);
+                                            item.setIcon(mUnsavedIcon);
+                                            showMessage(R.string.post_unsaved_success);
+                                        }
+                                        EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
                                     }
-                                    EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
-                                }
 
-                                @Override
-                                public void failed() {
-                                    if (isAdded()) {
-                                        mPost.setSaved(true);
-                                        item.setIcon(mSavedIcon);
-                                        showMessage(R.string.post_unsaved_failed);
+                                    @Override
+                                    public void failed() {
+                                        if (isAdded()) {
+                                            mPost.setSaved(true);
+                                            item.setIcon(mSavedIcon);
+                                            showMessage(R.string.post_unsaved_failed);
+                                        }
+                                        EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
                                     }
-                                    EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
-                                }
-                            });
+                                });
+                    } else {
+                        item.setIcon(mSavedIcon);
+                        SaveThing.saveThingLocally(mRedditDataRoomDatabase, mExecutor, mActivity.accountName, mPost.getId(), SavedPost.TYPE_POST,
+                                new SaveThing.SaveThingListener() {
+                                    @Override
+                                    public void success() {
+                                        if (isAdded()) {
+                                            mPost.setSaved(true);
+                                            item.setIcon(mSavedIcon);
+                                            showMessage(R.string.post_saved_success);
+                                        }
+                                        EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
+                                    }
+
+                                    @Override
+                                    public void failed() {
+                                        if (isAdded()) {
+                                            mPost.setSaved(false);
+                                            item.setIcon(mUnsavedIcon);
+                                            showMessage(R.string.post_saved_failed);
+                                        }
+                                        EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
+                                    }
+                                });
+                    }
                 } else {
-                    item.setIcon(mSavedIcon);
-                    SaveThing.saveThing(mOauthRetrofit, mActivity.accessToken, mPost.getFullName(),
-                            new SaveThing.SaveThingListener() {
-                                @Override
-                                public void success() {
-                                    if (isAdded()) {
-                                        mPost.setSaved(true);
-                                        item.setIcon(mSavedIcon);
-                                        showMessage(R.string.post_saved_success);
+                    if (mPost.isSaved()) {
+                        item.setIcon(mUnsavedIcon);
+                        SaveThing.unsaveThing(mOauthRetrofit, mActivity.accessToken, mPost.getFullName(),
+                                new SaveThing.SaveThingListener() {
+                                    @Override
+                                    public void success() {
+                                        if (isAdded()) {
+                                            mPost.setSaved(false);
+                                            item.setIcon(mUnsavedIcon);
+                                            showMessage(R.string.post_unsaved_success);
+                                        }
+                                        EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
                                     }
-                                    EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
-                                }
 
-                                @Override
-                                public void failed() {
-                                    if (isAdded()) {
-                                        mPost.setSaved(false);
-                                        item.setIcon(mUnsavedIcon);
-                                        showMessage(R.string.post_saved_failed);
+                                    @Override
+                                    public void failed() {
+                                        if (isAdded()) {
+                                            mPost.setSaved(true);
+                                            item.setIcon(mSavedIcon);
+                                            showMessage(R.string.post_unsaved_failed);
+                                        }
+                                        EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
                                     }
-                                    EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
-                                }
-                            });
+                                });
+                    } else {
+                        item.setIcon(mSavedIcon);
+                        SaveThing.saveThing(mOauthRetrofit, mActivity.accessToken, mPost.getFullName(),
+                                new SaveThing.SaveThingListener() {
+                                    @Override
+                                    public void success() {
+                                        if (isAdded()) {
+                                            mPost.setSaved(true);
+                                            item.setIcon(mSavedIcon);
+                                            showMessage(R.string.post_saved_success);
+                                        }
+                                        EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
+                                    }
+
+                                    @Override
+                                    public void failed() {
+                                        if (isAdded()) {
+                                            mPost.setSaved(false);
+                                            item.setIcon(mUnsavedIcon);
+                                            showMessage(R.string.post_saved_failed);
+                                        }
+                                        EventBus.getDefault().post(new PostUpdateEventToPostList(mPost, postListPosition));
+                                    }
+                                });
+                    }
                 }
             }
             return true;

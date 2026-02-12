@@ -1,11 +1,17 @@
 package ml.docilealligator.infinityforreddit.thing;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
+import ml.docilealligator.infinityforreddit.RedditDataRoomDatabase;
 import ml.docilealligator.infinityforreddit.apis.RedditAPI;
+import ml.docilealligator.infinityforreddit.savedpost.SavedPostUtils;
 import ml.docilealligator.infinityforreddit.utils.APIUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,6 +58,24 @@ public class SaveThing {
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 saveThingListener.failed();
             }
+        });
+    }
+
+    public static void saveThingLocally(RedditDataRoomDatabase redditDataRoomDatabase, Executor executor,
+                                        String username, String postId, int type, SaveThingListener saveThingListener) {
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            SavedPostUtils.insertSavedPost(redditDataRoomDatabase, username, postId, type);
+            mainHandler.post(saveThingListener::success);
+        });
+    }
+
+    public static void unsaveThingLocally(RedditDataRoomDatabase redditDataRoomDatabase, Executor executor,
+                                          String username, String postId, SaveThingListener saveThingListener) {
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            SavedPostUtils.deleteSavedPost(redditDataRoomDatabase, username, postId);
+            mainHandler.post(saveThingListener::success);
         });
     }
 
