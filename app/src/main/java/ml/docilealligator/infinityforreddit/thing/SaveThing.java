@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
+import ml.docilealligator.infinityforreddit.RedditDataRoomDatabase;
 import ml.docilealligator.infinityforreddit.apis.RedditAPI;
+import ml.docilealligator.infinityforreddit.savedpost.SavedPostUtils;
 import ml.docilealligator.infinityforreddit.utils.APIUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,6 +56,18 @@ public class SaveThing {
                 saveThingListener.failed();
             }
         });
+    }
+
+    public static void saveThingLocally(RedditDataRoomDatabase redditDataRoomDatabase, Executor executor,
+                                        String username, String postId, int type, SaveThingListener saveThingListener) {
+        SavedPostUtils.insertSavedPost(redditDataRoomDatabase, executor, username, postId, type);
+        saveThingListener.success();
+    }
+
+    public static void unsaveThingLocally(RedditDataRoomDatabase redditDataRoomDatabase, Executor executor,
+                                          String username, String postId, SaveThingListener saveThingListener) {
+        SavedPostUtils.deleteSavedPost(redditDataRoomDatabase, executor, username, postId);
+        saveThingListener.success();
     }
 
     public interface SaveThingListener {
