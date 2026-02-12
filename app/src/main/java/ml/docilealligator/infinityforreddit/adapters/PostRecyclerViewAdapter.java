@@ -661,11 +661,7 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
             if (mHandleReadPost && post.isRead()) {
                 ((PostViewHolder) holder).setItemViewBackgroundColor(true);
                 ((PostViewHolder) holder).titleTextView.setTextColor(mReadPostTitleColor);
-                if (mShowReadPostsWithReducedTransparency) {
-                    ((PostViewHolder) holder).setItemViewReducedTransparency(true);
-                } else {
-                    ((PostViewHolder) holder).setItemViewReducedTransparency(false);
-                }
+                ((PostViewHolder) holder).setItemViewReducedTransparency(mShowReadPostsWithReducedTransparency);
             } else {
                 ((PostViewHolder) holder).setItemViewReducedTransparency(false);
             }
@@ -1161,11 +1157,7 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
                 if (mHandleReadPost && post.isRead()) {
                     holder.itemView.setBackgroundTintList(ColorStateList.valueOf(mReadPostCardViewBackgroundColor));
                     ((PostGalleryViewHolder) holder).binding.titleTextViewItemPostGallery.setTextColor(mReadPostTitleColor);
-                    if (mShowReadPostsWithReducedTransparency) {
-                        holder.itemView.setAlpha(0.6f);
-                    } else {
-                        holder.itemView.setAlpha(1.0f);
-                    }
+                    holder.itemView.setAlpha(mShowReadPostsWithReducedTransparency ? 0.6f : 1.0f);
                 } else {
                     holder.itemView.setAlpha(1.0f);
                 }
@@ -1325,11 +1317,7 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
                 ((PostGalleryBaseGalleryTypeViewHolder) holder).currentPosition = position;
                 if (mHandleReadPost && post.isRead()) {
                     holder.itemView.setBackgroundTintList(ColorStateList.valueOf(mReadPostCardViewBackgroundColor));
-                    if (mShowReadPostsWithReducedTransparency) {
-                        holder.itemView.setAlpha(0.6f);
-                    } else {
-                        holder.itemView.setAlpha(1.0f);
-                    }
+                    holder.itemView.setAlpha(mShowReadPostsWithReducedTransparency ? 0.6f : 1.0f);
                 } else {
                     holder.itemView.setAlpha(1.0f);
                 }
@@ -2555,7 +2543,7 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         abstract void setItemViewBackgroundColor(boolean isReadPost);
-        abstract void setItemViewReducedTransparency(boolean isReadPost);
+        abstract void setItemViewReducedTransparency(boolean applyTransparency);
         abstract void markPostRead(Post post, boolean changePostItemColor);
     }
 
@@ -3328,8 +3316,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -3374,8 +3362,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -3554,8 +3542,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -3814,8 +3802,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -3909,8 +3897,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -4187,8 +4175,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
 
         @Override
@@ -4701,8 +4689,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -4749,8 +4737,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -4796,8 +4784,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -4839,8 +4827,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -4880,8 +4868,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -4926,8 +4914,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -4972,8 +4960,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -5015,8 +5003,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -5055,8 +5043,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 
@@ -5093,8 +5081,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
         }
 
         @Override
-        void setItemViewReducedTransparency(boolean isReadPost) {
-            itemView.setAlpha(isReadPost ? 0.6f : 1.0f);
+        void setItemViewReducedTransparency(boolean applyTransparency) {
+            itemView.setAlpha(applyTransparency ? 0.6f : 1.0f);
         }
     }
 }
