@@ -1610,4 +1610,20 @@
     <string name="comment_spam_status">This comment is removed as spam</string>
 
     <string name="copying_multi_reddit">Copying</string>
+
+    <!-- Translation Feature -->
+    <string name="settings_translation_feature_title">Translation Feature</string>
+    <string name="settings_translation_backend_title">Translation Backend</string>
+    <string name="settings_translation_backend">Backend</string>
+    <string name="settings_translation_general_title">General Settings</string>
+    <string name="settings_translation_target_language">Target Language</string>
+    <string name="settings_google_translation_api_key">Google Cloud API Key</string>
+    <string name="settings_google_translation_api_key_summary">Enter your Google Cloud Translation API key</string>
+    <string name="settings_deepl_api_key">DeepL API Key</string>
+    <string name="settings_deepl_api_key_summary">Enter your DeepL API key (free or pro)</string>
+    <string name="translate">Translate</string>
+    <string name="translated">Translated</string>
+    <string name="translation_failed">Translation failed</string>
+    <string name="translating">Translating…</string>
+    <string name="show_original">Show Original</string>
 </resources>

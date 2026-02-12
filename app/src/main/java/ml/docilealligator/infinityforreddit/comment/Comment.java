@@ -71,6 +71,10 @@ public class Comment implements Parcelable {
     private boolean loadMoreChildrenFailed;
     private long editedTimeMillis;
     private Map<String, MediaMetadata> mediaMetadataMap;
+    
+    // Translation fields
+    private String translatedCommentRawText;
+    private boolean isTranslated;
 
     public Comment(String id, String fullName, String author, String authorFullName, String authorFlair,
                    String authorFlairHTML, String linkAuthor,
@@ -182,6 +186,8 @@ public class Comment implements Parcelable {
         isLoadingMoreChildren = in.readByte() != 0;
         loadMoreChildrenFailed = in.readByte() != 0;
         mediaMetadataMap = (Map<String, MediaMetadata>) in.readValue(getClass().getClassLoader());
+        translatedCommentRawText = in.readString();
+        isTranslated = in.readByte() != 0;
     }
 
     public String getId() {
@@ -510,6 +516,22 @@ public class Comment implements Parcelable {
         this.mediaMetadataMap = mediaMetadataMap;
     }
 
+    public String getTranslatedCommentRawText() {
+        return translatedCommentRawText;
+    }
+
+    public void setTranslatedCommentRawText(String translatedCommentRawText) {
+        this.translatedCommentRawText = translatedCommentRawText;
+    }
+
+    public boolean isTranslated() {
+        return isTranslated;
+    }
+
+    public void setTranslated(boolean translated) {
+        isTranslated = translated;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -560,5 +582,7 @@ public class Comment implements Parcelable {
         parcel.writeByte((byte) (isLoadingMoreChildren ? 1 : 0));
         parcel.writeByte((byte) (loadMoreChildrenFailed ? 1 : 0));
         parcel.writeValue(mediaMetadataMap);
+        parcel.writeString(translatedCommentRawText);
+        parcel.writeByte((byte) (isTranslated ? 1 : 0));
     }
 }

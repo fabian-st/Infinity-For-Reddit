@@ -157,6 +157,13 @@ public class CommentMoreBottomSheetFragment extends LandscapeExpandedRoundedBott
             });
         }
 
+        binding.translateTextViewCommentMoreBottomSheetFragment.setOnClickListener(view -> {
+            if (activity instanceof ViewPostDetailActivity) {
+                ((ViewPostDetailActivity) activity).translateComment(comment, bundle.getInt(EXTRA_POSITION));
+            }
+            dismiss();
+        });
+
         binding.shareTextViewCommentMoreBottomSheetFragment.setOnClickListener(view -> {
             dismiss();
             try {

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ml.docilealligator.infinityforreddit.customviews.preference.CustomFontPreferenceCategory
+        app:title="@string/settings_translation_backend_title">
+
+        <androidx.preference.ListPreference
+            app:key="translator_type"
+            app:title="@string/settings_translation_backend"
+            app:defaultValue="none"
+            app:entries="@array/settings_translation_backends"
+            app:entryValues="@array/settings_translation_backend_values"
+            app:useSimpleSummaryProvider="true" />
+
+        <androidx.preference.EditTextPreference
+            app:key="google_translation_api_key"
+            app:title="@string/settings_google_translation_api_key"
+            app:summary="@string/settings_google_translation_api_key_summary"
+            app:dependency="translator_type"
+            app:useSimpleSummaryProvider="false" />
+
+        <androidx.preference.EditTextPreference
+            app:key="deepl_api_key"
+            app:title="@string/settings_deepl_api_key"
+            app:summary="@string/settings_deepl_api_key_summary"
+            app:dependency="translator_type"
+            app:useSimpleSummaryProvider="false" />
+
+    </ml.docilealligator.infinityforreddit.customviews.preference.CustomFontPreferenceCategory>
+
+    <ml.docilealligator.infinityforreddit.customviews.preference.CustomFontPreferenceCategory
+        app:title="@string/settings_translation_general_title">
+
+        <androidx.preference.ListPreference
+            app:key="translation_target_language"
+            app:title="@string/settings_translation_target_language"
+            app:defaultValue="en"
+            app:entries="@array/settings_translation_languages"
+            app:entryValues="@array/settings_translation_language_codes"
+            app:useSimpleSummaryProvider="true" />
+
+    </ml.docilealligator.infinityforreddit.customviews.preference.CustomFontPreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

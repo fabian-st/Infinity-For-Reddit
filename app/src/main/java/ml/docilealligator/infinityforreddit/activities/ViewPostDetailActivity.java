@@ -544,6 +544,21 @@ public class ViewPostDetailActivity extends BaseActivity implements SortTypeSele
         }
     }
 
+    public void translateComment(@NonNull Comment comment, int position) {
+        // TODO: Implement comment translation
+        Toast.makeText(this, R.string.translating, Toast.LENGTH_SHORT).show();
+        
+        ViewPostDetailFragment fragment = mSectionsPagerAdapter.getCurrentFragment();
+        if (fragment != null) {
+            fragment.translateComment(comment, position);
+        }
+    }
+
+    public void translatePost(@NonNull Post post, int position) {
+        // TODO: Implement post translation
+        Toast.makeText(this, R.string.translating, Toast.LENGTH_SHORT).show();
+    }
+
     public boolean toggleSearchPanelVisibility() {
         if (binding.searchPanelMaterialCardViewViewPostDetailActivity.getVisibility() == View.GONE) {
             binding.searchPanelMaterialCardViewViewPostDetailActivity.setVisibility(View.VISIBLE);
