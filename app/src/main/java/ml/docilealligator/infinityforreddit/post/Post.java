@@ -82,6 +82,11 @@ public class Post implements Parcelable {
     private String approvedBy;
     private boolean removed;
     private boolean spam;
+    
+    // Translation fields
+    private String translatedTitle;
+    private String translatedSelfText;
+    private boolean isTranslated;
 
     //Text and video posts
     public Post(String id, String fullName, String subredditName, String subredditNamePrefixed,
@@ -226,6 +231,9 @@ public class Post implements Parcelable {
         previews = in.createTypedArrayList(Preview.CREATOR);
         mediaMetadataMap = (Map<String, MediaMetadata>) in.readValue(getClass().getClassLoader());
         gallery = in.createTypedArrayList(Gallery.CREATOR);
+        translatedTitle = in.readString();
+        translatedSelfText = in.readString();
+        isTranslated = in.readByte() != 0;
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -571,6 +579,9 @@ public class Post implements Parcelable {
         dest.writeTypedList(previews);
         dest.writeValue(mediaMetadataMap);
         dest.writeTypedList(gallery);
+        dest.writeString(translatedTitle);
+        dest.writeString(translatedSelfText);
+        dest.writeByte((byte) (isTranslated ? 1 : 0));
     }
 
     public boolean isStickied() {
@@ -693,6 +704,30 @@ public class Post implements Parcelable {
 
     public void setMp4Variant(String mp4Variant) {
         this.mp4Variant = mp4Variant;
+    }
+
+    public String getTranslatedTitle() {
+        return translatedTitle;
+    }
+
+    public void setTranslatedTitle(String translatedTitle) {
+        this.translatedTitle = translatedTitle;
+    }
+
+    public String getTranslatedSelfText() {
+        return translatedSelfText;
+    }
+
+    public void setTranslatedSelfText(String translatedSelfText) {
+        this.translatedSelfText = translatedSelfText;
+    }
+
+    public boolean isTranslated() {
+        return isTranslated;
+    }
+
+    public void setTranslated(boolean translated) {
+        isTranslated = translated;
     }
 
     @Override
